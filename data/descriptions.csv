@@ -1,0 +1,111 @@
+type,description
+fire,Building fire
+fire,Forest fire
+fire,House fire
+fire,Industrial fire
+fire,Apartment fire
+fire,Wildfire
+fire,Vehicle fire
+medical,Heart attack
+medical,Stroke
+medical,Severe bleeding
+medical,Allergic reaction
+medical,Respiratory distress
+medical,Seizure
+medical,Unconscious person
+medical,Cardiac arrest
+medical,Hypoglycemia (low blood sugar)
+medical,Hypertensive crisis
+medical,Asthma attack
+medical,Anaphylaxis
+medical,Poisoning
+medical,Diabetic ketoacidosis
+medical,Heat stroke
+medical,Fracture
+medical,Concussion
+medical,Heat exhaustion
+medical,Hypothermia
+medical,Dehydration
+medical,Food poisoning
+medical,Appendicitis
+medical,Migraine
+medical,Panic attack
+medical,Anxiety attack
+medical,PTSD (Post-Traumatic Stress Disorder)
+medical,Heat rash
+medical,Frostbite
+medical,Hypoglycemic coma
+medical,Hyperglycemic crisis
+medical,Hyperventilation
+medical,Heat cramps
+medical,Severe sunburn
+medical,Heat syncope
+medical,Allergic asthma attack
+medical,Acute coronary syndrome
+medical,Pulmonary embolism
+medical,Sepsis
+medical,Septic shock
+medical,Ruptured appendix
+accident,Car accident
+accident,Truck accident
+accident,Motorcycle accident
+accident,Pedestrian accident
+accident,Bicycle accident
+accident,Train accident
+accident,Boating accident
+accident,Boat collision
+accident,Plane crash
+accident,Bus accident
+accident,Skateboarding accident
+accident,Rollerblading accident
+accident,ATV accident
+accident,Skiing accident
+accident,Snowboarding accident
+disaster,Earthquake
+disaster,Hurricane
+disaster,Tornado
+disaster,Flood
+disaster,Tsunami
+disaster,Wildfire
+disaster,Landslide
+crime,Robbery
+crime,Burglary
+crime,Assault
+crime,Kidnapping
+crime,Shooting
+crime,Stabbing
+crime,Domestic violence
+crime,Arson
+crime,Fraud
+crime,Embezzlement
+crime,Vandalism
+crime,Cybercrime
+crime,Identity theft
+crime,Shoplifting
+crime,Burglary of a vehicle
+crime,Carjacking
+crime,Extortion
+crime,Human trafficking
+crime,Drug trafficking
+crime,Money laundering
+crime,Organized crime
+crime,Copyright infringement
+crime,Terrorism
+crime,Hate crime
+crime,Public intoxication
+crime,Disorderly conduct
+crime,Cyberbullying
+power,Blackout
+power,Power grid failure
+power,Transformer explosion
+power,Electrical malfunction
+power,Substation failure
+power,Transmission line failure
+power,Equipment failure
+gas,Natural gas leak
+gas,Propane leak
+gas,Carbon monoxide leak
+gas,Methane leak
+gas,Chemical leak
+gas,Hydrogen sulfide leak
+gas,Sulfur dioxide leak
