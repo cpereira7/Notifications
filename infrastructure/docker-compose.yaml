@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: emergency_db
+    restart: always
+    env_file: env_file.env
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  pydatagen:
+    build: ../application/datagen
+    container_name: event_generator
+    restart: always
+    env_file: env_file.env
+    depends_on:
+      - postgres
+    volumes:
+      - ../data:/app/data
