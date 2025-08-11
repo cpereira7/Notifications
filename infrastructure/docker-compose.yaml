@@ -9,6 +9,16 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  redis:
+    container_name: event_cache
+    env_file: env_file.env
+    image: redis:latest
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+
   pydatagen:
     build: ../application/datagen
     container_name: event_generator
@@ -18,3 +28,12 @@ services:
       - postgres
     volumes:
       - ../data:/app/data
+  
+  datasyncapp:
+    build: ../application/datasync
+    container_name: event_sync
+    env_file: env_file.env
+    depends_on:
+      - postgres
+      - redis
+      - pydatagen
