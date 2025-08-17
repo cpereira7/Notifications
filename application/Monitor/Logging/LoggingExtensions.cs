@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Monitor;
+namespace Monitor.Logging;
 
 public static partial class LoggingExtensions
 {
