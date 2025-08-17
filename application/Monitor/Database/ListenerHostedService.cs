@@ -10,16 +10,18 @@ internal class ListenerHostedService<TModel> : BackgroundService
 {
     private readonly DatabaseListener<TModel> _listener;
     private readonly ILogger<ListenerHostedService<TModel>> _logger;
+    private readonly Guid _instanceId;
 
     public ListenerHostedService(DatabaseListener<TModel> listener, ILogger<ListenerHostedService<TModel>> logger)
     {
         _listener = listener;
         _logger = logger;
+        _instanceId = Guid.NewGuid();
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogStartedListener(typeof(TModel).Name);
+        _logger.LogStartedListener(typeof(TModel).Name, _instanceId);
         
         await _listener.ListenAsync(stoppingToken);
     }
@@ -27,6 +29,7 @@ internal class ListenerHostedService<TModel> : BackgroundService
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
         await base.StopAsync(cancellationToken);
+        
         await _listener.DisposeAsync().ConfigureAwait(false);
     }
 }

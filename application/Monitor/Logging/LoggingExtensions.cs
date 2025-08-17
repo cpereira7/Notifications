@@ -10,6 +10,6 @@ public static partial class LoggingExtensions
     [LoggerMessage(LogLevel.Warning, "Non-conforming notification received: {notification}")]
     public static partial void LogNonConformNotification(this ILogger logger, Exception ex, string notification);
 
-    [LoggerMessage(LogLevel.Information, "Started the Background service for {@serviceName}")]
-    public static partial void LogStartedListener(this ILogger logger, string serviceName);
+    [LoggerMessage(LogLevel.Information, "Started the Background service for {@serviceName} with Id: {@serviceId}")]
+    public static partial void LogStartedListener(this ILogger logger, string serviceName, Guid serviceId);
 }
