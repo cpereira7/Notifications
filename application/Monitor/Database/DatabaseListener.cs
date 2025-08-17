@@ -8,7 +8,8 @@ using Npgsql;
 
 namespace Monitor.Database;
 
-internal class DatabaseListener<TModel> where TModel : NotificationPayload
+internal class DatabaseListener<TModel> : IAsyncDisposable
+    where TModel : NotificationPayload
 {
     private readonly ILogger<DatabaseListener<TModel>> _logger;
     private readonly NpgsqlConnection? _connection;
@@ -82,5 +83,11 @@ internal class DatabaseListener<TModel> where TModel : NotificationPayload
                 await _connection.CloseAsync();
             }
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_connection != null)
+            await _connection.DisposeAsync();
     }
 }
