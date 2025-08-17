@@ -37,3 +37,15 @@ services:
       - postgres
       - redis
       - pydatagen
+
+  monitor:
+    build: 
+      context: ../application/
+      dockerfile: ./Monitor/Dockerfile
+    container_name: event_monitor
+    env_file: env_file.env
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=emergency_database;Username=postgres;Password=postgres;
+    depends_on:
+      - postgres
+      - redis
