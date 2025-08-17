@@ -49,3 +49,5 @@ services:
     depends_on:
       - postgres
       - redis
+      - datasyncapp
+    restart: always

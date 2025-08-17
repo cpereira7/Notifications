@@ -2,6 +2,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Monitor.Logging;
 using Monitor.Model;
 using Newtonsoft.Json;
 using Npgsql;
@@ -42,46 +43,30 @@ internal class DatabaseListener<TModel> : IAsyncDisposable
             var payload = JsonConvert.DeserializeObject<TModel>(e.Payload)
                           ?? throw new JsonSerializationException($"Invalid JSON data format for type {typeof(TModel).Name}");
 
-            Logging.LoggingExtensions.LogNotification(_logger, payload.Data);
+            _logger.LogNotification(payload.Data);
         }
         catch (Exception ex)
         {
-            Logging.LoggingExtensions.LogNonConformNotification(_logger, ex, e.Payload);
+            _logger.LogNonConformNotification(ex, e.Payload);
         }
     }
 
-    public async Task StartListeningAsync(CancellationToken cancellationToken)
+    public async Task ListenAsync(CancellationToken cancellationToken)
     {
         if (_connection == null)
         {
             throw new InvalidOperationException("Database connection is not initialized.");
         }
-            
-        try
-        {
-            await _connection.OpenAsync(cancellationToken);
+        
+        await _connection.OpenAsync(cancellationToken);
 
-            Logging.LoggingExtensions.LogDatabaseConnectionOpen(_logger);
+        var safeChannel = "\"" + _channelName.Replace("\"", "\"\"") + "\"";
+        await using var command = new NpgsqlCommand($"LISTEN {safeChannel}", _connection);
+        await command.ExecuteNonQueryAsync(cancellationToken);
 
-            var safeChannel = "\"" + _channelName.Replace("\"", "\"\"") + "\"";
-            await using var command = new NpgsqlCommand($"LISTEN {safeChannel}", _connection);
-            await command.ExecuteNonQueryAsync(cancellationToken);
-
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await _connection!.WaitAsync(cancellationToken);
-            }
-        }
-        catch (Exception ex)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            Logging.LoggingExtensions.LogDatabaseListenerStartError(_logger, ex);
-        }
-        finally
-        {
-            if (_connection.State == ConnectionState.Open)
-            {
-                await _connection.CloseAsync();
-            }
+            await _connection!.WaitAsync(cancellationToken);
         }
     }
 
