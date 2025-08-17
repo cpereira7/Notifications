@@ -1,3 +1,5 @@
+using System.Reflection;
+using Microsoft.AspNetCore.HttpLogging;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,9 +21,21 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
             { redisHost, int.Parse(redisPort) },
         },
         KeepAlive = 180,
-        Password = ""
+        Password = "",
+        LoggerFactory = sp.GetService<ILoggerFactory>()
     };
     return ConnectionMultiplexer.Connect(config);
+});
+
+builder.Services.AddHttpLogging(options =>
+{
+    options.LoggingFields = HttpLoggingFields.RequestMethod |
+                            HttpLoggingFields.RequestPath |
+                            HttpLoggingFields.ResponseStatusCode | 
+                            HttpLoggingFields.Duration;
+    options.RequestBodyLogLimit = 4096;
+    options.ResponseBodyLogLimit = 4096;
+    options.CombineLogs = true;
 });
 
 var app = builder.Build();
@@ -33,6 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseHttpLogging();
 
 app.MapGet("/events", async (IConnectionMultiplexer redis) =>
 {
@@ -57,6 +72,11 @@ app.MapGet("/events", async (IConnectionMultiplexer redis) =>
     return Results.Ok(events);
 });
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => new
+{
+    Status = "Healthy",
+    Timestamp = DateTime.UtcNow,
+    Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(),
+});
 
 await app.RunAsync();
