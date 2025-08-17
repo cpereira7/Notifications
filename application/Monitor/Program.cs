@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Monitor.Database;
 using Monitor.Model;
+using Serilog;
 
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureLogging(logging =>
+    .UseSerilog((context, configuration) =>
     {
-        logging.ClearProviders();
-        logging.AddConsole();
+        configuration.ReadFrom.Configuration(context.Configuration);
     })
     .ConfigureServices((context, services) =>
     {
