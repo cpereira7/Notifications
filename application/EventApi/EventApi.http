@@ -1,4 +1,4 @@
-@EventApi_HostAddress = https://localhost:7258
+@EventApi_HostAddress = https://localhost:7258/
 
 GET {{EventApi_HostAddress}}/events/
 Accept: application/json
@@ -8,4 +8,12 @@ Accept: application/json
 GET {{EventApi_HostAddress}}/
 Accept: application/json
 
-###
+### Dispatch responders
+
+POST {{EventApi_HostAddress}}/events/563/dispatch?unit=car_48
+Accept: application/json
+
+### Resolve event
+
+POST {{EventApi_HostAddress}}/events/563/resolve?unit=car_48
+Accept: application/json

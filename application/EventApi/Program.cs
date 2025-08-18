@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Reflection;
 using Microsoft.AspNetCore.HttpLogging;
 using StackExchange.Redis;
@@ -70,6 +71,58 @@ app.MapGet("/events", async (IConnectionMultiplexer redis) =>
     }
 
     return Results.Ok(events);
+});
+
+app.MapPost("/events/{id}/dispatch", async (string id, string unit, IConnectionMultiplexer redis, ILogger<Program> logger) =>
+{
+    var db = redis.GetDatabase();
+    
+    var keyPattern = $"event:{id}:*";
+    var server = redis.GetServer(redis.GetEndPoints()[0]);
+    
+    var key = server.Keys(pattern: keyPattern).FirstOrDefault();
+    if (string.IsNullOrEmpty(key))
+    {
+        return Results.NotFound($"Event with id={id} not found");
+    }
+    
+    await db.HashSetAsync(key, "dispatched_to", unit);
+    await db.HashSetAsync(key, "status", "dispatched");
+    await db.HashSetAsync(key, "dispatched_time", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+    
+    logger.LogInformation("Dispatched unit '{unit}' to event with id='{id}'", unit, id);
+    
+    return Results.Ok(new
+    {
+        id,
+        status = "dispatched"
+    });
+});
+
+app.MapPost("/events/{id}/resolve", async (string id, string unit, IConnectionMultiplexer redis, ILogger<Program> logger) =>
+{
+    var db = redis.GetDatabase();
+    
+    var keyPattern = $"event:{id}:*";
+    var server = redis.GetServer(redis.GetEndPoints()[0]);
+    
+    var key = server.Keys(pattern: keyPattern).FirstOrDefault();
+    if (string.IsNullOrEmpty(key))
+    {
+        return Results.NotFound($"Event with id={id} not found");
+    }
+    
+    await db.HashSetAsync(key, "resolved_to", unit);
+    await db.HashSetAsync(key, "resolved_time", DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+    await db.HashSetAsync(key, "status", "resolved");
+    
+    logger.LogInformation("Dispatched unit '{unit}' to event with id='{id}'", unit, id);
+
+    return Results.Ok(new
+    {
+        id,
+        status = "resolved"
+    });
 });
 
 app.MapGet("/", () => new
